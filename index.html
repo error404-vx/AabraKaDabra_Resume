@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>AabraKaDabra Resume – conjure an ATS resume from any job description</title>
+    <script type="module" src="./src/main.js"></script>
+  </head>
+  <body>
+    <div class="sky" aria-hidden="true"></div>
+    <header class="hero">
+      <p class="eyebrow">~ A spellbook for job seekers ~</p>
+      <h1>AabraKaDabra Resume</h1>
+      <p>Paste a job description, say the magic words, and conjure an ATS-friendly Word resume.</p>
+    </header>
+
+    <main>
+      <section class="card" id="step-job" aria-labelledby="h-job">
+        <h2 id="h-job"><span class="step">1</span> The job description</h2>
+        <form id="job-form" novalidate>
+          <div class="grid-2">
+            <label>Job title <input id="job-title-in" maxlength="200" placeholder="e.g. Senior Data Analyst" /></label>
+            <label>Company <span class="muted">(optional)</span> <input id="job-company-in" maxlength="200" /></label>
+          </div>
+          <label>Job description
+            <textarea id="job-text" rows="12" maxlength="40000" required placeholder="Paste the full job description here: responsibilities, requirements, nice-to-haves…"></textarea>
+          </label>
+          <button type="submit" class="primary" id="job-submit">Reveal the keywords</button>
+          <p class="status" id="job-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="card" id="step-profile" aria-labelledby="h-profile" hidden>
+        <h2 id="h-profile"><span class="step">2</span> Your details</h2>
+        <div id="job-summary" class="job-summary"></div>
+
+        <form id="profile-form" novalidate>
+          <fieldset>
+            <legend>Contact</legend>
+            <div class="grid-2">
+              <label>Full name <input name="fullName" autocomplete="name" maxlength="120" /></label>
+              <label>Email <input name="email" type="email" autocomplete="email" maxlength="200" /></label>
+              <label>Phone <input name="phone" type="tel" autocomplete="tel" maxlength="60" /></label>
+              <label>City, Country <input name="location" autocomplete="address-level2" maxlength="120" /></label>
+              <label>LinkedIn <input name="linkedin" maxlength="300" placeholder="linkedin.com/in/you" /></label>
+              <label>Portfolio / GitHub <input name="website" maxlength="300" /></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Work history <span class="muted">(most recent first, optional)</span></legend>
+            <p class="hint">Add your real employers and dates. Bullet points are written for you from the job description. Leave empty to get highlighted placeholders to fill in Word.</p>
+            <div id="work-list" class="rows"></div>
+            <button type="button" class="ghost" id="add-work">+ Add role</button>
+          </fieldset>
+
+          <fieldset>
+            <legend>Education</legend>
+            <p class="hint" id="edu-hint"></p>
+            <div id="edu-list" class="rows"></div>
+            <button type="button" class="ghost" id="add-edu">+ Add education</button>
+          </fieldset>
+
+          <fieldset>
+            <legend>Other</legend>
+            <div class="grid-2">
+              <label>Years of experience <input name="yearsExperience" type="number" min="0" max="60" /></label>
+              <label>Paper size
+                <select name="paperSize">
+                  <option value="A4">A4</option>
+                  <option value="Letter">US Letter</option>
+                </select>
+              </label>
+            </div>
+            <label>Certifications <span class="muted">(one per line, only ones you hold)</span>
+              <textarea name="certifications" rows="3" maxlength="3000"></textarea>
+            </label>
+            <p class="hint" id="cert-hint"></p>
+          </fieldset>
+
+          <div class="actions">
+            <button type="submit" class="primary" id="profile-submit">Conjure my resume</button>
+            <button type="button" class="link" id="clear-saved">Forget saved details</button>
+          </div>
+          <p class="status" id="profile-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="card" id="step-review" aria-labelledby="h-review" hidden>
+        <h2 id="h-review"><span class="step">3</span> Review &amp; download</h2>
+        <div id="coverage" class="coverage"></div>
+        <p class="notice">Read every line before you apply. Keep only statements that reflect your real experience and replace any <mark>[highlighted placeholders]</mark>. Interviewers will ask about anything on your resume.</p>
+
+        <form id="review-form" novalidate>
+          <label>Headline <input id="rv-headline" maxlength="250" /></label>
+          <label>Professional summary <textarea id="rv-summary" rows="5" maxlength="2000"></textarea></label>
+          <label>Skills <span class="muted">(one group per line: Category: skill, skill)</span>
+            <textarea id="rv-skills" rows="7"></textarea>
+          </label>
+          <div id="rv-experience"></div>
+          <div class="actions">
+            <button type="submit" class="primary" id="download">Download Word resume (.docx)</button>
+            <button type="button" class="ghost" id="regenerate">Recast the spell</button>
+          </div>
+          <p class="status" id="review-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer>Runs entirely in your browser. Nothing you type is uploaded anywhere.</footer>
+
+    <template id="work-tpl">
+      <div class="row">
+        <div class="grid-3">
+          <label>Job title <input data-k="title" maxlength="150" /></label>
+          <label>Company <input data-k="company" maxlength="150" /></label>
+          <label>Location <input data-k="location" maxlength="120" /></label>
+          <label>Start <input data-k="start" maxlength="40" placeholder="Jan 2021" /></label>
+          <label>End <input data-k="end" maxlength="40" placeholder="Present" /></label>
+        </div>
+        <button type="button" class="link remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="edu-tpl">
+      <div class="row">
+        <div class="grid-3">
+          <label>Degree &amp; field <input data-k="degree" maxlength="200" placeholder="B.Tech, Computer Science" /></label>
+          <label>Institution <input data-k="institution" maxlength="200" /></label>
+          <label>Location <input data-k="location" maxlength="120" /></label>
+          <label>Graduation <input data-k="graduation" maxlength="40" placeholder="2020" /></label>
+          <label>Details <input data-k="details" maxlength="400" placeholder="GPA, honors, coursework (optional)" /></label>
+        </div>
+        <button type="button" class="link remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="exp-tpl">
+      <fieldset class="exp">
+        <legend></legend>
+        <div class="grid-3">
+          <label>Job title <input data-k="title" maxlength="150" /></label>
+          <label>Company <input data-k="company" maxlength="150" /></label>
+          <label>Location <input data-k="location" maxlength="120" /></label>
+          <label>Start <input data-k="start" maxlength="40" /></label>
+          <label>End <input data-k="end" maxlength="40" /></label>
+        </div>
+        <label>Bullet points <span class="muted">(one per line)</span>
+          <textarea data-k="bullets" rows="7"></textarea>
+        </label>
+      </fieldset>
+    </template>
+  </body>
+</html>

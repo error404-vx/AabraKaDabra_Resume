@@ -1,0 +1,26 @@
+{
+  "name": "aabrakadabra-resume",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Paste any job description and get an ATS-friendly Word resume tailored to it.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "dependencies": {
+    "docx": "^9.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.0",
+    "vitest": "^3.2.4"
+  }
+}
