@@ -5,6 +5,7 @@
   "description": "Paste any job description and get an ATS-friendly Word resume tailored to it.",
   "type": "module",
   "scripts": {
+    "start": "vite",
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
